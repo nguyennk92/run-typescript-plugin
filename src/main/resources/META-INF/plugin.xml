@@ -1,0 +1,56 @@
+<idea-plugin>
+    <id>com.nguyennk.run-typescript-plugin</id>
+    <name>Run typescript</name>
+    <version>1.0.0</version>
+    <vendor url="https://github.com/nguyennk92/run-typescript-plugin"
+            email="nguyennk92@gmail.com">Nguyen Khoi Nguyen
+    </vendor>
+
+    <description><![CDATA[
+      <p>Enable run/debug option in .ts files' popup menu</p>
+      <p>This plugin require <a href="https://www.npmjs.com/package/ts-node">ts-node</a><p>
+      <p>Thanks to:</p>
+      <ul>
+        <li><a href="https://github.com/bluelovers/idea-run-typescript">idea-run-typescript</a></li>
+        <li><a href="https://github.com/xiyuan-fengyu/IdeaPluginTypeScriptExecutor">IdeaPluginTypeScriptExecutor</a></li>
+      </ul>
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="173.0"/>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+<!--    <depends>com.intellij.modules.lang</depends>-->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>NodeJS</depends>
+    <depends>JavaScript</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!--  Add your actions here-->
+        <action
+                id="com.nguyennk.action.RunTsAction"
+                use-shortcut-of="RunDashboard.Run"
+                class="com.nguyennk.action.RunTsAction">
+            <add-to-group group-id="ProjectViewPopupMenuRunGroup" anchor="first"/>
+            <add-to-group group-id="EditorPopupMenu.Run" anchor="first"/>
+        </action>
+        <action id="com.nguyennk.action.DebugTsAction"
+                use-shortcut-of="RunDashboard.Debug"
+                class="com.nguyennk.action.DebugTsAction">
+            <add-to-group
+                    group-id="ProjectViewPopupMenuRunGroup"
+                    anchor="after"
+                    relative-to-action="com.nguyennk.action.RunTsAction"/>
+            <add-to-group
+                    group-id="EditorPopupMenu.Run"
+                    anchor="after"
+                    relative-to-action="com.nguyennk.action.RunTsAction"/>
+        </action>
+    </actions>
+
+</idea-plugin>
