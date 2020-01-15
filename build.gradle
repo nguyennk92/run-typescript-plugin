@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.nguyennk'
-version '1.0.0'
+version '1.0.1'
 
 sourceCompatibility = 1.8
 
@@ -32,5 +32,7 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 patchPluginXml {
-    changeNotes """"""
+    changeNotes """
+        Fix duplication in unit test files (.spec.ts/.test.ts)
+    """
 }
