@@ -21,7 +21,7 @@
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
-<!--    <depends>com.intellij.modules.lang</depends>-->
+    <!--    <depends>com.intellij.modules.lang</depends>-->
     <depends>com.intellij.modules.platform</depends>
     <depends>NodeJS</depends>
     <depends>JavaScript</depends>
@@ -36,8 +36,16 @@
                 id="com.nguyennk.action.RunTsAction"
                 use-shortcut-of="RunDashboard.Run"
                 class="com.nguyennk.action.RunTsAction">
-            <add-to-group group-id="ProjectViewPopupMenuRunGroup" anchor="first"/>
-            <add-to-group group-id="EditorPopupMenu.Run" anchor="first"/>
+            <add-to-group
+                    group-id="ProjectViewPopupMenuRunGroup"
+                    anchor="first"/>
+            <add-to-group
+                    group-id="EditorPopupMenu.Run"
+                    anchor="first"/>
+            <add-to-group
+                    group-id="EditorTabPopupMenuEx"
+                    relative-to-action="RunContextPopupGroup"
+                    anchor="before"/>
         </action>
         <action id="com.nguyennk.action.DebugTsAction"
                 use-shortcut-of="RunDashboard.Debug"
@@ -50,6 +58,10 @@
                     group-id="EditorPopupMenu.Run"
                     anchor="after"
                     relative-to-action="com.nguyennk.action.RunTsAction"/>
+            <add-to-group
+                    group-id="EditorTabPopupMenuEx"
+                    relative-to-action="com.nguyennk.action.RunTsAction"
+                    anchor="after"/>
         </action>
     </actions>
 

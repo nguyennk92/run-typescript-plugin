@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.nguyennk'
-version '1.0.1'
+version '1.0.2'
 
 sourceCompatibility = 1.8
 
@@ -33,6 +33,6 @@ compileTestKotlin {
 }
 patchPluginXml {
     changeNotes """
-        Fix duplication in unit test files (.spec.ts/.test.ts)
+        Add to EditorTabPopup (right-click on Editor's tab)
     """
 }
