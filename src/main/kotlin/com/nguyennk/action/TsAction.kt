@@ -3,10 +3,10 @@ package com.nguyennk.action
 import com.intellij.execution.ProgramRunnerUtil
 import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.actions.RunContextAction
 import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.icons.AllIcons
+import com.intellij.javascript.jest.JestConfigurationType
 import com.intellij.lang.javascript.TypeScriptFileType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -16,7 +16,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.nodejs.run.NodeJsRunConfiguration
 import com.jetbrains.nodejs.run.NodeJsRunConfigurationType
-import java.io.File
 import javax.swing.Icon
 
 open class TsAction(icon: Icon = AllIcons.Actions.Execute) : AnAction(icon) {
@@ -80,9 +79,10 @@ open class TsAction(icon: Icon = AllIcons.Actions.Execute) : AnAction(icon) {
 
     private fun getExistedConfiguration(file: VirtualFile, project: Project): RunnerAndConfigurationSettings? {
         val runManager = RunManager.getInstance(project)
-        val type = NodeJsRunConfigurationType.getInstance()
-        val settingList = runManager.getConfigurationSettingsList(type)
-        return settingList.find { x ->
+        val runSettings = runManager.getConfigurationSettingsList(NodeJsRunConfigurationType.getInstance())
+        val testSettings = runManager.getConfigurationSettingsList(JestConfigurationType.getInstance())
+        val allSettings = runSettings.union(testSettings)
+        return allSettings.find { x ->
             val config = x.configuration as NodeJsRunConfiguration
             var workingDirectory = config.workingDirectory.orEmpty()
             if (!workingDirectory.endsWith("/")) {
