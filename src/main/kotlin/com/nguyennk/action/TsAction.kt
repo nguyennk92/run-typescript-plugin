@@ -3,7 +3,6 @@ package com.nguyennk.action
 import com.intellij.execution.ProgramRunnerUtil
 import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.actions.RunContextAction
 import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.icons.AllIcons
@@ -16,11 +15,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.nodejs.run.NodeJsRunConfiguration
 import com.jetbrains.nodejs.run.NodeJsRunConfigurationType
-import java.io.File
 import javax.swing.Icon
 
 open class TsAction(icon: Icon = AllIcons.Actions.Execute) : AnAction(icon) {
     private val logger = Logger.getInstance(javaClass)
+    private val testRegex = """.*\.(spec|test)\.[jt]sx?${'$'}""".toRegex()
 
     protected open val debug: Boolean = false
 
@@ -46,7 +45,8 @@ open class TsAction(icon: Icon = AllIcons.Actions.Execute) : AnAction(icon) {
 //        runManager.addConfiguration(settings)
         runManager.setTemporaryConfiguration(settings)
 
-        val executor = if (debug) DefaultDebugExecutor.getDebugExecutorInstance() else DefaultRunExecutor.getRunExecutorInstance()
+        val executor =
+            if (debug) DefaultDebugExecutor.getDebugExecutorInstance() else DefaultRunExecutor.getRunExecutorInstance()
 
         ProgramRunnerUtil.executeConfiguration(settings, executor)
     }
@@ -56,9 +56,8 @@ open class TsAction(icon: Icon = AllIcons.Actions.Execute) : AnAction(icon) {
 
         val project = event.getData(CommonDataKeys.PROJECT) as Project
         val virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE) as VirtualFile
-        val existed = getExistedConfiguration(virtualFile, project)
 
-        if (virtualFile.fileType is TypeScriptFileType && existed == null) {
+        if (shouldShow(virtualFile, project)) {
             event.presentation.isEnabledAndVisible = true
             event.presentation.text = getText(virtualFile)
         } else {
@@ -66,8 +65,11 @@ open class TsAction(icon: Icon = AllIcons.Actions.Execute) : AnAction(icon) {
         }
     }
 
-    protected fun isDebugAction(): Boolean {
-        return debug
+    private fun shouldShow(virtualFile: VirtualFile, project: Project): Boolean {
+        val existed = getExistedConfiguration(virtualFile, project)
+        return virtualFile.fileType is TypeScriptFileType
+                && existed == null
+                && !testRegex.matches(virtualFile.name)
     }
 
     private fun getText(virtualFile: VirtualFile): String {
@@ -80,9 +82,8 @@ open class TsAction(icon: Icon = AllIcons.Actions.Execute) : AnAction(icon) {
 
     private fun getExistedConfiguration(file: VirtualFile, project: Project): RunnerAndConfigurationSettings? {
         val runManager = RunManager.getInstance(project)
-        val type = NodeJsRunConfigurationType.getInstance()
-        val settingList = runManager.getConfigurationSettingsList(type)
-        return settingList.find { x ->
+        val allSettings = runManager.getConfigurationSettingsList(NodeJsRunConfigurationType.getInstance())
+        return allSettings.find { x ->
             val config = x.configuration as NodeJsRunConfiguration
             var workingDirectory = config.workingDirectory.orEmpty()
             if (!workingDirectory.endsWith("/")) {
